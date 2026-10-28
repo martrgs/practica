@@ -3,16 +3,6 @@ ion-card {
   margin: 16px 0;
 }
 
-/* Controles para avanzar por las páginas de órdenes. */
-.paginacion {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-}
-
 /* Tamaño de los títulos de las tarjetas. */
 ion-card-title {
   font-size: 20px;

@@ -83,15 +83,12 @@ export class HomePage implements OnInit {
 
   // Valores iniciales del filtro de precios.
   // PARA OTRO EJERCICIO: ajusta estos valores iniciales al rango que necesites.
+  // El máximo de 250000 permite mostrar los 100 registros actuales de la API.
   precioMinimo = 0;
-  precioMaximo = 200000;
+  precioMaximo = 250000;
 
   // Indica si se deben mostrar únicamente órdenes con stock crítico.
   soloStockCritico = false;
-
-  // PARA OTRO EJERCICIO: cambia 10 para mostrar más o menos órdenes por página.
-  paginaActual = 1;
-  ordenesPorPagina = 10;
 
   // Controla la apertura del modal y la orden seleccionada.
   modalAbierto = false;
@@ -147,29 +144,6 @@ export class HomePage implements OnInit {
   // Calcula la cantidad de órdenes que cumplen los filtros.
   get cantidadOrdenes(): number {
     return this.ordenesFiltradas.length;
-  }
-
-  // PARA OTRO EJERCICIO: este corte determina cuáles órdenes muestra la página actual.
-  get ordenesPagina(): Orden[] {
-    const inicio = (this.paginaActual - 1) * this.ordenesPorPagina;
-    return this.ordenesFiltradas.slice(inicio, inicio + this.ordenesPorPagina);
-  }
-
-  get totalPaginas(): number {
-    return Math.ceil(this.cantidadOrdenes / this.ordenesPorPagina);
-  }
-
-  // Vuelve a la primera página cuando cambian los filtros.
-  reiniciarPaginacion(): void {
-    this.paginaActual = 1;
-  }
-
-  paginaAnterior(): void {
-    if (this.paginaActual > 1) this.paginaActual--;
-  }
-
-  paginaSiguiente(): void {
-    if (this.paginaActual < this.totalPaginas) this.paginaActual++;
   }
 
   // Abre el modal con la orden seleccionada.
@@ -244,7 +218,6 @@ export class HomePage implements OnInit {
     );
 
     this.ordenes = this.adaptarPublicaciones(publicacionesDemo);
-    this.reiniciarPaginacion();
   }
 
   // Adapta los posts de prueba a órdenes, ya que la API no entrega inventario.

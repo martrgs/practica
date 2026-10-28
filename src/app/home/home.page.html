@@ -44,8 +44,7 @@
           labelPlacement="stacked"
           type="number"
           min="0"
-          [(ngModel)]="precioMinimo"
-          (ngModelChange)="reiniciarPaginacion()">
+          [(ngModel)]="precioMinimo">
         </ion-input>
       </ion-item>
 
@@ -56,16 +55,14 @@
           labelPlacement="stacked"
           type="number"
           min="0"
-          [(ngModel)]="precioMaximo"
-          (ngModelChange)="reiniciarPaginacion()">
+          [(ngModel)]="precioMaximo">
         </ion-input>
       </ion-item>
 
       <!-- PARA OTRO EJERCICIO: cambia el límite 5 aquí y en la regla de home.page.ts. -->
       <ion-item>
         <ion-toggle
-          [(ngModel)]="soloStockCritico"
-          (ngModelChange)="reiniciarPaginacion()">
+          [(ngModel)]="soloStockCritico">
           Solo stock crítico
         </ion-toggle>
       </ion-item>
@@ -85,7 +82,7 @@
 
         <!-- Genera un elemento por cada orden filtrada. -->
         <ion-item
-          *ngFor="let orden of ordenesPagina"
+          *ngFor="let orden of ordenesFiltradas"
           lines="full">
 
           <!-- Avatar predeterminado de cada compra; position=start lo deja a la izquierda. -->
@@ -135,28 +132,6 @@
         </ion-item>
 
       </ion-list>
-
-      <!-- PARA OTRO EJERCICIO: cambia el tamaño en ordenesPorPagina (home.page.ts).
-           Estos botones muestran la página anterior o siguiente. -->
-      <div class="paginacion" *ngIf="totalPaginas > 1">
-        <ion-button
-          fill="outline"
-          [disabled]="paginaActual === 1"
-          (click)="paginaAnterior()"
-          aria-label="Mostrar página anterior">
-          ← Anterior
-        </ion-button>
-
-        <span aria-live="polite">Página {{ paginaActual }} de {{ totalPaginas }}</span>
-
-        <ion-button
-          fill="outline"
-          [disabled]="paginaActual === totalPaginas"
-          (click)="paginaSiguiente()"
-          aria-label="Mostrar página siguiente">
-          Siguiente →
-        </ion-button>
-      </div>
 
       <!-- Mensaje cuando los filtros no encuentran resultados. -->
       <p *ngIf="cantidadOrdenes === 0 && !cargando">
