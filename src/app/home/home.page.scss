@@ -1,27 +1,42 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+/* Espacio entre las tarjetas del dashboard, filtros y listado. */
+ion-card {
+  margin: 16px 0;
 }
 
-#container strong {
+/* Controles para avanzar por las páginas de órdenes. */
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+/* Tamaño de los títulos de las tarjetas. */
+ion-card-title {
   font-size: 20px;
-  line-height: 26px;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+/* Espaciado interno de los elementos del listado. */
+ion-item {
+  --padding-start: 12px;
 }
 
-#container a {
-  text-decoration: none;
+/* Separación de los indicadores de estado y stock. */
+ion-badge {
+  margin-left: 4px;
+}
+
+/* Separación del título de cada orden. */
+h2 {
+  margin-bottom: 8px;
+}
+
+/* Tamaño del modal de facturación. */
+ion-modal {
+  --width: 90%;
+  --max-width: 500px;
+  --height: 450px;
+  --border-radius: 12px;
 }

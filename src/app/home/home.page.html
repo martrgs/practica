@@ -1,21 +1,233 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title> Blank </ion-title>
+<!-- Encabezado de la aplicación. -->
+<ion-header>
+  <ion-toolbar color="primary">
+
+    <ion-title>Gestión de órdenes de compra</ion-title>
+
+    <!-- Permite volver a consultar la API. -->
+    <ion-buttons slot="end">
+      <ion-button (click)="actualizarOrdenes()">
+        Actualizar
+      </ion-button>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>
-      Start with Ionic
-      <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a>
-    </p>
-  </div>
+  <p *ngIf="cargando" role="status">Cargando órdenes...</p>
+
+  <!-- Dashboard con la cantidad de órdenes filtradas. -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Dashboard</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <h2>Total de órdenes: {{ cantidadOrdenes }}</h2>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Filtros interactivos de precio y stock. -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Filtros</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <!-- Precio mínimo permitido. -->
+      <ion-item>
+        <ion-input
+          label="Precio mínimo"
+          labelPlacement="stacked"
+          type="number"
+          min="0"
+          [(ngModel)]="precioMinimo"
+          (ngModelChange)="reiniciarPaginacion()">
+        </ion-input>
+      </ion-item>
+
+      <!-- Precio máximo permitido. -->
+      <ion-item>
+        <ion-input
+          label="Precio máximo"
+          labelPlacement="stacked"
+          type="number"
+          min="0"
+          [(ngModel)]="precioMaximo"
+          (ngModelChange)="reiniciarPaginacion()">
+        </ion-input>
+      </ion-item>
+
+      <!-- PARA OTRO EJERCICIO: cambia el límite 5 aquí y en la regla de home.page.ts. -->
+      <ion-item>
+        <ion-toggle
+          [(ngModel)]="soloStockCritico"
+          (ngModelChange)="reiniciarPaginacion()">
+          Solo stock crítico
+        </ion-toggle>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Listado de órdenes que cumplen los filtros. -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Órdenes de compra</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <ion-list>
+
+        <!-- Genera un elemento por cada orden filtrada. -->
+        <ion-item
+          *ngFor="let orden of ordenesPagina"
+          lines="full">
+
+          <!-- Avatar predeterminado de cada compra; position=start lo deja a la izquierda. -->
+          <ion-avatar slot="start" aria-hidden="true">
+            <ion-icon name="cart-outline"></ion-icon>
+          </ion-avatar>
+
+          <ion-label class="ion-text-wrap">
+
+            <h2>Orden #{{ orden.id }}</h2>
+
+            <p>{{ orden.producto }}</p>
+
+            <!-- Presenta el precio en pesos colombianos. -->
+            <p>
+              Precio:
+              {{ orden.precio | currency:'COP':'symbol':'1.0-0' }}
+            </p>
+
+            <!-- El indicador se pone rojo cuando el stock es crítico. -->
+            <p>
+              Stock:
+              <ion-badge
+                [color]="orden.stock < 5 ? 'danger' : 'success'">
+                {{ orden.stock }}
+              </ion-badge>
+            </p>
+
+            <!-- Muestra el estado de la orden. -->
+            <p>
+              Estado:
+              <ion-badge
+                [color]="orden.estado === 'Pagado' ? 'success' : 'warning'">
+                {{ orden.estado }}
+              </ion-badge>
+            </p>
+
+          </ion-label>
+
+          <!-- Abre el detalle de facturación de la orden. -->
+          <ion-button
+            slot="end"
+            (click)="abrirModal(orden)">
+            Facturar
+          </ion-button>
+
+        </ion-item>
+
+      </ion-list>
+
+      <!-- PARA OTRO EJERCICIO: cambia el tamaño en ordenesPorPagina (home.page.ts).
+           Estos botones muestran la página anterior o siguiente. -->
+      <div class="paginacion" *ngIf="totalPaginas > 1">
+        <ion-button
+          fill="outline"
+          [disabled]="paginaActual === 1"
+          (click)="paginaAnterior()"
+          aria-label="Mostrar página anterior">
+          ← Anterior
+        </ion-button>
+
+        <span aria-live="polite">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+
+        <ion-button
+          fill="outline"
+          [disabled]="paginaActual === totalPaginas"
+          (click)="paginaSiguiente()"
+          aria-label="Mostrar página siguiente">
+          Siguiente →
+        </ion-button>
+      </div>
+
+      <!-- Mensaje cuando los filtros no encuentran resultados. -->
+      <p *ngIf="cantidadOrdenes === 0 && !cargando">
+        No hay órdenes que coincidan con los filtros.
+      </p>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Modal que presenta el desglose de facturación. -->
+  <ion-modal
+    [isOpen]="modalAbierto"
+    (didDismiss)="cerrarModal()">
+
+    <ng-template>
+
+      <ion-header>
+        <ion-toolbar>
+
+          <ion-title>Facturación</ion-title>
+
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()">
+              Cerrar
+            </ion-button>
+          </ion-buttons>
+
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+
+        <!-- Solo muestra el detalle cuando existe una orden seleccionada. -->
+        <div *ngIf="ordenSeleccionada">
+
+          <h2>Orden #{{ ordenSeleccionada.id }}</h2>
+
+          <p>Producto: {{ ordenSeleccionada.producto }}</p>
+
+          <!-- Subtotal de la orden. -->
+          <ion-item>
+            <ion-label>Subtotal</ion-label>
+
+            <ion-note slot="end">
+              {{ ordenSeleccionada.precio | currency:'COP':'symbol':'1.0-0' }}
+            </ion-note>
+          </ion-item>
+
+          <!-- IVA calculado en TypeScript. -->
+          <ion-item>
+            <ion-label>IVA (19 %)</ion-label>
+
+            <ion-note slot="end">
+              {{ iva | currency:'COP':'symbol':'1.0-0' }}
+            </ion-note>
+          </ion-item>
+
+          <!-- Total de la facturación. -->
+          <ion-item>
+            <ion-label>Total</ion-label>
+
+            <ion-note slot="end" color="primary">
+              {{ total | currency:'COP':'symbol':'1.0-0' }}
+            </ion-note>
+          </ion-item>
+
+        </div>
+
+      </ion-content>
+
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

@@ -35,3 +35,15 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+
+/* Configuración general de la página. */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Evita que el contenido desborde horizontalmente. */
+ion-content {
+  --padding-bottom: 16px;
+}

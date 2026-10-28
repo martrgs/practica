@@ -4,8 +4,13 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet],
+  styleUrls: ['app.component.scss'],
+
+  // Componentes principales necesarios para Ionic y la navegación.
+  standalone: true,
+  imports: [
+    IonApp,
+    IonRouterOutlet
+  ]
 })
-export class AppComponent {
-  constructor() {}
-}
+export class AppComponent {}
